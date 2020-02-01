@@ -84,10 +84,7 @@ var renderHistogramText = function (ctx, color, nameText, nameX, nameY, timeText
 };
 
 var getColorHistogramColumn = function (ctx, index, player) {
-  ctx.fillStyle = 'hsla(240, 100%, 50%, ' + (1 - (index / 10 * 2.5)) + ')';
-  if (player === 'Вы') {
-    ctx.fillStyle = 'rgba(255, 0, 0, 1)';
-  }
+  ctx.fillStyle = player === 'Вы' ? 'rgba(255, 0, 0, 1)' : 'hsla(240, 100%, 50%, ' + (1 - (index / 10 * 2.5)) + ')';
 };
 
 var renderHistogramColumn = function (ctx, index, player, time, maxTime) {
