@@ -4,15 +4,16 @@ var BAR_HEIGHT = 150;
 var BAR_WIDTH = 40;
 var CLOUD_HEIGHT = 270;
 var CLOUD_WIDTH = 420;
-var CLOUD_PADDING_TOP = GAP / 4;
 var CLOUD_X = 100;
 var CLOUD_Y = 10;
+var CLOUD_Y_REVERSE = CLOUD_Y + CLOUD_HEIGHT;
 var CLOUD_COLOR = '#fff';
 var CONGRATULATION_FIRST_LINE = 'Ура вы победили!';
 var CONGRATULATION_SECOND_LINE = 'Список результатов:';
 var CONGRATULATION_FONT = '16px PT Mono';
 var CONGRATULATION_COLOR = '#000';
 var GAP = 50;
+var CLOUD_PADDING_TOP = GAP / 4;
 var HISTOGRAM_TEXT_COLOR = '#000';
 var LINE_HEIGHT = 16;
 var NO_PLAYERS_MESSAGE = 'Игроков нет';
@@ -20,6 +21,8 @@ var SCREW_MARGIN = 10;
 var SCREW_RADIUS = 5;
 var SHADOW_COLOR = 'rgba(0, 0, 0, 0.7)';
 var SHADOW_OFFSET = 10;
+var startHistogramColumn = CLOUD_X + GAP;
+var stepHistogramColumn = BAR_WIDTH + GAP;
 
 var renderCloud = function (ctx, x, y, color) {
   ctx.fillStyle = color;
@@ -63,8 +66,25 @@ var renderCongratulation = function (ctx, textFirstLine, textSecondLine, color, 
 
   ctx.font = font;
   ctx.textBaseline = 'hanging';
-  ctx.fillText(textFirstLine, CLOUD_X + GAP, CLOUD_Y + CLOUD_PADDING_TOP);
-  ctx.fillText(textSecondLine, CLOUD_X + GAP, CLOUD_Y + CLOUD_PADDING_TOP + LINE_HEIGHT);
+  ctx.fillText(textFirstLine, startHistogramColumn, CLOUD_Y + CLOUD_PADDING_TOP);
+  ctx.fillText(textSecondLine, startHistogramColumn, CLOUD_Y + CLOUD_PADDING_TOP + LINE_HEIGHT);
+};
+
+var renderHistogramText = function (ctx, color, nameText, nameX, nameY, timeText, timeX, timeY) {
+  ctx.fillStyle = color;
+
+  ctx.fillText(nameText, nameX, nameY);
+
+  ctx.fillText(timeText, timeX, timeY);
+};
+
+var renderHistogramColumn = function (ctx, index, player, time, maxTime) {
+  ctx.fillStyle = 'hsla(240, 100%, 50%, ' + (1 - (index / 10 * 2.5)) + ')';
+  if (player === 'Вы') {
+    ctx.fillStyle = 'rgba(255, 0, 0, 1)';
+  }
+
+  ctx.fillRect(startHistogramColumn + (stepHistogramColumn * index), (CLOUD_Y_REVERSE - GAP - Math.floor((BAR_HEIGHT * time) / maxTime)), BAR_WIDTH, Math.floor((BAR_HEIGHT * time) / maxTime));
 };
 
 window.renderStatistics = function (ctx, players, times) {
@@ -72,8 +92,8 @@ window.renderStatistics = function (ctx, players, times) {
   renderCloud(ctx, CLOUD_X, CLOUD_Y, CLOUD_COLOR);
 
   renderScrew(ctx, CLOUD_X + SCREW_MARGIN, CLOUD_Y + SCREW_MARGIN, SCREW_RADIUS);
-  renderScrew(ctx, CLOUD_X + SCREW_MARGIN, CLOUD_Y + CLOUD_HEIGHT - SCREW_MARGIN, SCREW_RADIUS);
-  renderScrew(ctx, CLOUD_X + CLOUD_WIDTH - SCREW_MARGIN, CLOUD_Y + CLOUD_HEIGHT - SCREW_MARGIN, SCREW_RADIUS);
+  renderScrew(ctx, CLOUD_X + SCREW_MARGIN, CLOUD_Y_REVERSE - SCREW_MARGIN, SCREW_RADIUS);
+  renderScrew(ctx, CLOUD_X + CLOUD_WIDTH - SCREW_MARGIN, CLOUD_Y_REVERSE - SCREW_MARGIN, SCREW_RADIUS);
   renderScrew(ctx, CLOUD_X + CLOUD_WIDTH - SCREW_MARGIN, CLOUD_Y + SCREW_MARGIN, SCREW_RADIUS);
 
   renderCongratulation(ctx, CONGRATULATION_FIRST_LINE, CONGRATULATION_SECOND_LINE, CONGRATULATION_COLOR, CONGRATULATION_FONT);
@@ -81,22 +101,14 @@ window.renderStatistics = function (ctx, players, times) {
   var maxTime = getMaxElement(times);
 
   if (!maxTime) {
-    ctx.fillText(NO_PLAYERS_MESSAGE, CLOUD_X + GAP * 2, CLOUD_Y + GAP * 2);
+    ctx.fillText(NO_PLAYERS_MESSAGE, startHistogramColumn * 2, CLOUD_Y + GAP * 2);
     return;
   }
 
   for (var i = 0; i < players.length; i++) {
-    ctx.fillStyle = HISTOGRAM_TEXT_COLOR;
 
-    ctx.fillText(players[i], CLOUD_X + GAP + ((BAR_WIDTH + GAP) * i), (CLOUD_Y + CLOUD_HEIGHT - GAP / 2));
+    renderHistogramText(ctx, HISTOGRAM_TEXT_COLOR, players[i], startHistogramColumn + (stepHistogramColumn * i), (CLOUD_Y_REVERSE - GAP / 2), Math.floor(times[i]), startHistogramColumn + (stepHistogramColumn * i), (CLOUD_Y_REVERSE - GAP - Math.floor((BAR_HEIGHT * times[i]) / maxTime)) - LINE_HEIGHT);
 
-    ctx.fillText(Math.floor(times[i]), CLOUD_X + GAP + ((BAR_WIDTH + GAP) * i), (CLOUD_Y + CLOUD_HEIGHT - GAP - Math.floor((BAR_HEIGHT * times[i]) / maxTime)) - LINE_HEIGHT);
-
-    ctx.fillStyle = 'hsla(240, 100%, 50%, ' + (1 - (i / 10 * 2.5)) + ')';
-    if (players[i] === 'Вы') {
-      ctx.fillStyle = 'rgba(255, 0, 0, 1)';
-    }
-
-    ctx.fillRect(CLOUD_X + GAP + ((BAR_WIDTH + GAP) * i), (CLOUD_Y + CLOUD_HEIGHT - GAP - Math.floor((BAR_HEIGHT * times[i]) / maxTime)), BAR_WIDTH, Math.floor((BAR_HEIGHT * times[i]) / maxTime));
+    renderHistogramColumn(ctx, i, players[i], times[i], maxTime);
   }
 };
