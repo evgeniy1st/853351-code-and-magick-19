@@ -19,6 +19,7 @@ var SCREW_MARGIN = 10;
 var SCREW_RADIUS = 5;
 var SHADOW_COLOR = 'rgba(0, 0, 0, 0.7)';
 var SHADOW_OFFSET = 10;
+var NAME_OF_RED_COLUMN = 'Вы';
 var cloudPaddingTop = GAP / 4;
 var cloudYReverse = CLOUD_Y + CLOUD_HEIGHT;
 var cloudXReverse = CLOUD_X + CLOUD_WIDTH;
@@ -84,7 +85,7 @@ var renderHistogramText = function (ctx, color, nameText, nameX, nameY, timeText
 };
 
 var getColorHistogramColumn = function (ctx, index, player) {
-  ctx.fillStyle = player === 'Вы' ? 'rgba(255, 0, 0, 1)' : 'hsla(240, 100%, 50%, ' + (1 - (index / 10 * 2.5)) + ')';
+  ctx.fillStyle = player === NAME_OF_RED_COLUMN ? 'rgba(255, 0, 0, 1)' : 'hsla(240, 100%, 50%, ' + (1 - (index / 10 * 2.5)) + ')';
 };
 
 var renderHistogramColumn = function (ctx, index, player, time, maxTime) {
