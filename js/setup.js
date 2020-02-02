@@ -30,13 +30,18 @@ var getRandomEyesColor = function (arrEyeColor) {
   return arrEyeColor[getRandomNumber(0, arrEyeColor.length)];
 };
 
+var getObjectWizard = function (arr, index) {
+  arr[index] = {
+    name: getRamdomName(LIST_OF_NAMES, LIST_OF_LAST_NAMES),
+    coatColor: getRandomColor(LIST_OF_COLORS),
+    eyesColor: getRandomEyesColor(LIST_OF_EYES_COLORS)
+  };
+  return arr[index];
+};
+
 var getRandomData = function (arr, quantity) {
   for (var i = 0; i < quantity; i++) {
-    arr[i] = {
-      name: getRamdomName(LIST_OF_NAMES, LIST_OF_LAST_NAMES),
-      coatColor: getRandomColor(LIST_OF_COLORS),
-      eyesColor: getRandomEyesColor(LIST_OF_EYES_COLORS)
-    };
+    getObjectWizard(arr, i);
   }
   return arr;
 };
