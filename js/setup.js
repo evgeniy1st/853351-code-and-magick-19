@@ -107,14 +107,9 @@ var colorizeWizard = function (arrColor, el, inputEl) {
 };
 
 var colorizeFireball = function (arrColor) {
-  // может показааться, что переменная color не нужна, но если написать так:
-  // fireballWrap.style.backgroundColor = arrColor[getRandomNumber(0, arrColor.length)];
-  // inputFireball.value = fireballWrap.style.backgroundColor
-  // то окажется, что в свойстве backgroundColor цвет преобразуется в формат RGB, а для того, чтобы пройти серверную валидацию при отправке формы нам нужен шестнадцатеричный формат, поэтому приходится использовать переменную color
   var color = arrColor[getRandomNumber(0, arrColor.length)];
   fireballWrap.style.backgroundColor = color;
   inputFireball.value = color;
-
 };
 
 setupOpen.addEventListener('click', function () {
